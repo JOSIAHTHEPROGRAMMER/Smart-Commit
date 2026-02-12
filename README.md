@@ -1,9 +1,7 @@
 # SmartCommit
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev/)
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/JOSIAHTHEPROGRAMMER/Smart-Commit)](https://github.com/JOSIAHTHEPROGRAMMER/Smart-Commit/releases)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/JOSIAHTHEPROGRAMMER/Smart-Commit/release.yml)](https://github.com/JOSIAHTHEPROGRAMMER/Smart-Commit/actions)
 
 AI-powered git commit message generator using Google Gemini.
 
