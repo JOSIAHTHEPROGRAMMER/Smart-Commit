@@ -31,7 +31,6 @@ go.work
 .DS_Store
 Thumbs.db
 
-go.sum
 
 # Config
 .smartcommitrc.json
