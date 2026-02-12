@@ -85,7 +85,7 @@ func GenerateCommitMessage(diff string, cfg *config.Config) (string, error) {
 	message := result.Text()
 	message = strings.TrimSpace(message)
 
-	// Fallback if response is empty or too short
+	// Fallback if response is empty or too short k
 	if message == "" || len(message) < 10 {
 		return "chore: update files\n\n- Update project files\n- Apply changes from diff", nil
 	}

@@ -70,6 +70,9 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Filter sensitive data before sending to AI
+		diff = git.FilterSensitiveData(diff)
+
 		// Preview diff stats
 		successColor.Printf("✓ Found staged changes (%d characters)\n", len(diff))
 		infoColor.Println("\nGenerating commit message...")

@@ -48,9 +48,9 @@ func LoadConfig() (*Config, error) {
 func LoadEnv() error {
 	err := godotenv.Load()
 	if err != nil {
-
 		return nil
 	}
+
 	return nil
 }
 

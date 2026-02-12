@@ -179,6 +179,15 @@ Smart-Commit/
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Security Notice
+
+- Your git diffs are sent to Google Gemini for analysis
+- Sensitive data is filtered before transmission
+- Review generated messages before committing
+- Use `--dry-run` flag to preview without committing
+- Avoid using on repositories with sensitive/proprietary code
+- Consider self-hosted AI alternatives for sensitive projects
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
