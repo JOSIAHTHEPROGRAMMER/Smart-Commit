@@ -1,0 +1,5 @@
+{
+  "default_type": "feat",
+  "model": "gemini-3-flash-preview",
+  "style": "detailed"
+}
