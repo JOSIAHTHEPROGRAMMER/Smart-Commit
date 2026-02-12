@@ -187,6 +187,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Use `--dry-run` flag to preview without committing
 - Avoid using on repositories with sensitive/proprietary code
 - Consider self-hosted AI alternatives for sensitive projects
+- For Global usage, add /go/bin to your path
 
 ## License
 
