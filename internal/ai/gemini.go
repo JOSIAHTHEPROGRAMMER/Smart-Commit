@@ -1,91 +1,109 @@
 package ai
 
 import (
-	"context"
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"strings"
+	"io"
+	"net/http"
+	"time"
 
 	"github.com/JOSIAHTHEPROGRAMMER/Smart-Commit/internal/config"
-	"google.golang.org/genai"
 )
 
-const systemPrompt = `You are an expert at writing git commit messages following the Conventional Commits specification.
+// GenerateRequest represents the request payload for the AI server
+type GenerateRequest struct {
+	Diff      string `json:"diff"`
+	Type      string `json:"type,omitempty"`
+	Scope     string `json:"scope,omitempty"`
+	Style     string `json:"style"`
+	MaxLength int    `json:"max_length,omitempty"`
+}
 
-Your task is to analyze git diffs and generate high-quality commit messages.
+// GenerateResponse represents the response from the AI server
+type GenerateResponse struct {
+	Success bool `json:"success"`
+	Data    struct {
+		Message     string `json:"message"`
+		Type        string `json:"type"`
+		Scope       string `json:"scope"`
+		Description string `json:"description"`
+		Breaking    bool   `json:"breaking"`
+		Body        string `json:"body"`
+	} `json:"data,omitempty"`
+	Error struct {
+		Code    string `json:"code"`
+		Message string `json:"message"`
+		Details string `json:"details,omitempty"`
+	} `json:"error,omitempty"`
+}
 
-STRICT RULES:
-1. Format: type(scope): title
-2. Title MUST be under 72 characters
-3. Title MUST be in imperative mood (e.g., "add feature" not "added feature")
-4. Body MUST have 2-4 bullet points explaining what changed
-5. Valid types ONLY: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
-6. Scope is optional but preferred (e.g., api, ui, auth, db)
-7. Be concise and technical
-8. Focus on WHAT changed and WHY, not HOW
-
-OUTPUT FORMAT:
-type(scope): short imperative title under 72 chars
-
-- First change explained
-- Second change explained
-- Third change explained (if applicable)
-
-DO NOT include any explanations, markdown formatting, or extra text. Return ONLY the commit message.`
-
-const systemPromptShort = `Generate a concise conventional commit message.
-
-Rules:
-- Format: type(scope): title
-- Title under 72 chars
-- One line body summary only
-- Valid types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
-
-Return ONLY the commit message.`
-
-// GenerateCommitMessage uses Gemini to generate a commit message from a diff
+// GenerateCommitMessage sends a request to the AI server to generate a commit message
 func GenerateCommitMessage(diff string, cfg *config.Config) (string, error) {
-	apiKey, err := config.GetGeminiAPIKey()
+	serverURL := config.GetServerURL(cfg)
+	apiKey := config.GetAPIKey(cfg)
+
+	// Prepare request payload
+	requestBody := GenerateRequest{
+		Diff:      diff,
+		Style:     cfg.Style,
+		MaxLength: 100,
+	}
+
+	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to marshal request: %v", err)
 	}
 
-	ctx := context.Background()
-
-	client, err := genai.NewClient(ctx, &genai.ClientConfig{
-		APIKey: apiKey,
-	})
+	// Create HTTP request
+	url := fmt.Sprintf("%s/api/v1/generate", serverURL)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return "", fmt.Errorf("failed to create Gemini client: %v", err)
+		return "", fmt.Errorf("failed to create request: %v", err)
 	}
 
-	// Choose prompt based on style
-	selectedPrompt := systemPrompt
-	if cfg.Style == "short" {
-		selectedPrompt = systemPromptShort
+	// Set headers
+	req.Header.Set("Content-Type", "application/json")
+	if apiKey != "" {
+		req.Header.Set("X-API-Key", apiKey)
 	}
 
-	prompt := fmt.Sprintf("%s\n\nAnalyze this git diff and generate a conventional commit message:\n\n%s", selectedPrompt, diff)
-
-	// Use model from config
-	model := cfg.Model
-	if model == "" {
-		model = "gemini-3-flash-preview"
+	// Create HTTP client with timeout
+	timeout := time.Duration(cfg.Timeout) * time.Second
+	client := &http.Client{
+		Timeout: timeout,
 	}
 
-	result, err := client.Models.GenerateContent(
-		ctx,
-		model,
-		genai.Text(prompt),
-		nil,
-	)
+	// Send request
+	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate content: %v", err)
+		return "", fmt.Errorf("failed to connect to AI server: %v\nMake sure the server is running at %s", err, serverURL)
+	}
+	defer resp.Body.Close()
+
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response: %v", err)
 	}
 
-	message := result.Text()
-	message = strings.TrimSpace(message)
+	// Parse response
+	var response GenerateResponse
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse response: %v", err)
+	}
 
-	// Fallback if response is empty or too short k
+	// Check for errors
+	if !response.Success {
+		if response.Error.Code == "MISSING_API_KEY" || response.Error.Code == "INVALID_API_KEY" {
+			return "", fmt.Errorf("authentication failed: %s\nSet API_KEY in .smartcommitrc.json or SMARTCOMMIT_API_KEY environment variable", response.Error.Message)
+		}
+		return "", fmt.Errorf("server error: %s - %s", response.Error.Code, response.Error.Message)
+	}
+
+	// Return the generated commit message
+	message := response.Data.Message
 	if message == "" || len(message) < 10 {
 		return "chore: update files\n\n- Update project files\n- Apply changes from diff", nil
 	}

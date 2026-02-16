@@ -1,5 +1,7 @@
 {
   "default_type": "feat",
-  "model": "gemini-3-flash-preview",
-  "style": "detailed"
+  "style": "detailed",
+  "server_url": "http://localhost:8080",
+  "api_key": "",
+  "timeout": 30
 }
