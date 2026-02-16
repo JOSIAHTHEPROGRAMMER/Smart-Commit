@@ -45,10 +45,6 @@ make install
 go install github.com/JOSIAHTHEPROGRAMMER/Smart-Commit@latest
 ```
 
-### Option 3: Pre-built binaries
-
-Download the latest release from the [releases page](https://github.com/JOSIAHTHEPROGRAMMER/Smart-Commit/releases).
-
 ## Setup
 
 ### Step 1: Set up the AI Server
