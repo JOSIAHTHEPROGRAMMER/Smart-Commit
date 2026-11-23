@@ -1,4 +1,4 @@
-# SmartCommit
+# Smart-Commit
 
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -7,9 +7,9 @@ AI-powered git commit message generator using Google Gemini.
 
 ## Overview
 
-SmartCommit is a command-line tool that generates conventional commit messages by analyzing your staged git changes. It connects to a centralized AI server that handles the AI processing, allowing you to use SmartCommit across all your projects without managing API keys in each repository.
+Smart-Commit is a command-line tool that generates conventional commit messages by analyzing your staged git changes. It connects to a centralized AI server that handles the AI processing, allowing you to use Smart-Commit across all your projects without managing API keys in each repository.
 
-**Backend Server:** [SmartCommit AI Server](https://github.com/JOSIAHTHEPROGRAMMER/Smart-Commit-AI-Server)
+**Backend Server:** [Smart-Commit AI Server](https://github.com/JOSIAHTHEPROGRAMMER/Smart-Commit-AI-Server)
 
 ## Features
 
@@ -27,7 +27,7 @@ SmartCommit is a command-line tool that generates conventional commit messages b
 
 - Go 1.25 or higher
 - Git
-- SmartCommit AI Server (local or deployed)
+- Smart-Commit AI Server (local or deployed)
 
 ## Installation
 
@@ -49,7 +49,7 @@ go install github.com/JOSIAHTHEPROGRAMMER/Smart-Commit@latest
 
 ### Step 1: Set up the AI Server
 
-You need a running SmartCommit AI Server. Choose one option:
+You need a running Smart-Commit AI Server. Choose one option:
 
 **Option A: Local Server (Recommended for personal use)**
 
@@ -69,7 +69,7 @@ node server.js
 
 Follow the Vercel deployment guide in the [AI Server repository](https://github.com/JOSIAHTHEPROGRAMMER/Smart-Commit-AI-Server#deploy-to-vercel).
 
-### Step 2: Configure SmartCommit Client
+### Step 2: Configure Smart-Commit Client
 
 You have **three options** for configuration. Choose the one that works best for you:
 
@@ -144,7 +144,7 @@ This overrides home directory config and environment variables for that specific
 
 #### Configuration Priority
 
-SmartCommit checks configuration in this order (highest to lowest priority):
+Smart-Commit checks configuration in this order (highest to lowest priority):
 
 1. **Environment variables** (`SMARTCOMMIT_SERVER_URL`, `SMARTCOMMIT_API_KEY`)
 2. **Current project directory** (`.smartcommitrc.json`)
@@ -154,8 +154,8 @@ SmartCommit checks configuration in this order (highest to lowest priority):
 ### Step 3: Verify Setup
 
 ```bash
-# Check if smartcommit is installed
-smartcommit --version
+# Check if smart-commit is installed
+smart-commit --version
 
 # Test connection to server
 curl http://localhost:8080/health
@@ -172,7 +172,7 @@ curl https://your-app.vercel.app/health
 git add .
 
 # Generate and commit
-smartcommit
+smart-commit
 ```
 
 ### Command-line Flags
@@ -190,26 +190,26 @@ smartcommit
 
 ```bash
 # Preview commit message without committing
-smartcommit --dry-run
+smart-commit --dry-run
 
 # Copy commit message to clipboard
-smartcommit --copy
+smart-commit --copy
 
 # Force specific commit type
-smartcommit --type feat
+smart-commit --type feat
 
 # Force specific scope
-smartcommit --scope api
+smart-commit --scope api
 
 # Combine multiple flags
-smartcommit --dry-run --copy --type fix --scope auth
+smart-commit --dry-run --copy --type fix --scope auth
 ```
 
 ## Configuration
 
 ### Configuration Options
 
-SmartCommit can be configured in three ways, listed by priority (highest to lowest):
+Smart-Commit can be configured in three ways, listed by priority (highest to lowest):
 
 1. **Environment Variables** - Override everything
 2. **Project Config File** - Project-specific settings (`.smartcommitrc.json` in project directory)
@@ -434,7 +434,7 @@ git add .
 git add file1.js file2.js
 ```
 
-### Command not found: smartcommit
+### Command not found: smart-commit
 
 **Add Go bin to PATH:**
 ```bash
@@ -457,7 +457,7 @@ source ~/.bashrc
 
 ### Data Filtering
 
-SmartCommit automatically filters sensitive data from git diffs:
+Smart-Commit automatically filters sensitive data from git diffs:
 - API keys and tokens
 - Passwords and secrets
 - Private keys
